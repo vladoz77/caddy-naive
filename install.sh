@@ -227,7 +227,9 @@ cat > /etc/caddy/Caddyfile <<CADDY_EOF
 		}
 
 		handle @naive {
-			reverse_proxy h2c://127.0.0.1:1080
+			reverse_proxy h2c://127.0.0.1:1080 {
+        header_up Proxy-Authorization {header.Proxy-Authorization}
+      }
 		}
 
 		handle {
@@ -237,7 +239,8 @@ cat > /etc/caddy/Caddyfile <<CADDY_EOF
 	}
 }
 CADDY_EOF
-chown root:caddy /etc/caddy/Caddyfile
+chown caddy:caddy /etc/caddy/Caddyfile
+chown -R caddy:caddy /var/log/caddy
 chmod 640 /etc/caddy/Caddyfile
 caddy fmt --overwrite /etc/caddy/Caddyfile
 caddy validate --config /etc/caddy/Caddyfile
